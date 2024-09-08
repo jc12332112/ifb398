@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
-
-using WebApplication1.Models;
+using WebApplication1.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
