@@ -38,5 +38,19 @@ namespace StudentApi.Controllers
 
             return student;
         }
+        [HttpGet("AverageGrade")]
+        public async Task<ActionResult<double>> GetAverageGrade()
+        {
+            if (!_context.Students.Any())
+            {
+                return NotFound("No students found.");
+            }
+
+            double averageGrade = await _context.Students.AverageAsync(s => s.grade);
+            return averageGrade; 
+        }
     }
+
+
 }
+
