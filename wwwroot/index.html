@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+    <div class="text-center">
+        <h1 class="display-4">IFB398 Task: Student Score Management System</h1>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+        <!-- Add Student Score Section -->
+        <div class="section">
+            <h3>Add Student Score</h3>
+            <div class="mb-3">
+                <label for="studentId" class="form-label">Student ID:</label>
+                <input type="number" class="form-control" id="studentId" placeholder="Enter Student ID" required>
+            </div>
+            <div class="mb-3">
+                <label for="subject" class="form-label">Subject:</label>
+                <input type="text" class="form-control" id="subject" placeholder="Enter Subject" required>
+            </div>
+            <div class="mb-3">
+                <label for="score" class="form-label">Score:</label>
+                <input type="number" class="form-control" id="score" placeholder="Enter Score" required>
+            </div>
+            <button class="btn btn-primary" onclick="addScore()">Add Score</button>
+        </div>
+
+        <!-- Calculate Student Overall Grade Section -->
+        <div class="section mt-5">
+            <h3>Calculate Student Overall Grade</h3>
+            <div class="mb-3">
+                <label for="studentIdCalc" class="form-label">Student ID:</label>
+                <input type="number" class="form-control" id="studentIdCalc" placeholder="Enter Student ID" required>
+            </div>
+            <button class="btn btn-primary" onclick="calculateOverallGrade()">Calculate</button>
+        </div>
+    </div>
+
+    <script>
+    function addScore() {
+        alert("Adding score...");
+        // API logic for adding score
+    }
+
+    function calculateOverallGrade() {
+        alert("Calculating student overall grade...");
+        // API logic for calculating student overall grade
+    }
+    </script>
+
+</body>
+</html>
