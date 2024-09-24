@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
+    <title>Student Score Management System</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
@@ -32,6 +32,23 @@
             <button class="btn btn-primary" onclick="addScore()">Add Score</button>
         </div>
 
+        <!-- Student Scores Table -->
+        <div class="section mt-5">
+            <h3>Student Scores</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Subject</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody id="scoresTable">
+                    <!-- Table rows will be added dynamically here -->
+                </tbody>
+            </table>
+        </div>
+
         <!-- Calculate Student Overall Grade Section -->
         <div class="section mt-5">
             <h3>Calculate Student Overall Grade</h3>
@@ -40,19 +57,79 @@
                 <input type="number" class="form-control" id="studentIdCalc" placeholder="Enter Student ID" required>
             </div>
             <button class="btn btn-primary" onclick="calculateOverallGrade()">Calculate</button>
+            <div id="overallGradeResult" class="mt-3"></div> <!-- Display result here -->
         </div>
     </div>
 
     <script>
-    function addScore() {
-        alert("Adding score...");
-        // API logic for adding score
-    }
+        // Store student scores in an array
+        let studentScores = [];
 
-    function calculateOverallGrade() {
-        alert("Calculating student overall grade...");
-        // API logic for calculating student overall grade
-    }
+        // Function to add a score
+        function addScore() {
+            const studentId = document.getElementById("studentId").value;
+            const subject = document.getElementById("subject").value;
+            const score = document.getElementById("score").value;
+
+            // Simple validation
+            if (studentId && subject && score) {
+                // Add the score to the studentScores array
+                studentScores.push({
+                    studentId: studentId,
+                    subject: subject,
+                    score: parseFloat(score)
+                });
+
+                // Update the scores table
+                updateScoresTable();
+
+                // Clear input fields
+                document.getElementById("studentId").value = '';
+                document.getElementById("subject").value = '';
+                document.getElementById("score").value = '';
+            } else {
+                alert("Please fill in all fields.");
+            }
+        }
+
+        // Function to update the scores table
+        function updateScoresTable() {
+            const tableBody = document.getElementById("scoresTable");
+            tableBody.innerHTML = '';
+
+            studentScores.forEach(score => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${score.studentId}</td>
+                    <td>${score.subject}</td>
+                    <td>${score.score}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to calculate the overall grade
+        function calculateOverallGrade() {
+            const studentId = document.getElementById("studentIdCalc").value;
+            const resultDiv = document.getElementById("overallGradeResult");
+
+            if (studentId) {
+                // Filter scores for the given student ID
+                const scores = studentScores.filter(score => score.studentId === studentId);
+
+                if (scores.length > 0) {
+                    // Calculate the average score
+                    const total = scores.reduce((sum, score) => sum + score.score, 0);
+                    const average = total / scores.length;
+
+                    resultDiv.innerHTML = `Overall Grade for Student ID ${studentId}: ${average.toFixed(2)}`;
+                } else {
+                    resultDiv.innerHTML = `No scores found for Student ID ${studentId}`;
+                }
+            } else {
+                alert("Please enter a Student ID.");
+            }
+        }
     </script>
 
 </body>
