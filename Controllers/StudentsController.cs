@@ -22,10 +22,23 @@ namespace StudentApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Student>> PostStudent(Student student)
         {
+            // Ensure the grades are correctly linked to the student
+            if (student.Grades != null && student.Grades.Any())
+            {
+                foreach (var grade in student.Grades)
+                {
+                    grade.Student = student;  // Link each grade to the student being created
+                }
+            }
+
             _context.Students.Add(student);
             await _context.SaveChangesAsync();
+
             return CreatedAtAction("GetStudent", new { id = student.Id }, student);
         }
+
+
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Student>> GetStudent(int id)
@@ -41,27 +54,40 @@ namespace StudentApi.Controllers
         [HttpGet("AverageGrade")]
         public async Task<ActionResult<double>> GetAverageGrade()
         {
-            if (!_context.Students.Any())
+            var students = await _context.Students
+                .Include(s => s.Grades)
+                .ToListAsync();
+
+            if (!students.Any())
             {
                 return NotFound("No students found.");
             }
 
-            double averageGrade = await _context.Students.AverageAsync(s => s.grade);
-            return averageGrade; 
+            double overallAverage = students
+                .Where(s => s.Grades.Any())
+                .Average(s => s.Grades.Average(g => g.GradeValue));
+
+            return Ok(overallAverage);
         }
+
 
         [HttpGet("grades")]
         public async Task<ActionResult<IEnumerable<Student>>> GetAllStudentGrades()
         {
-            var students = await _context.Students.ToListAsync();
+            var students = await _context.Students
+                .Include(s => s.Grades)  // This includes each student's grades
+                .ToListAsync();
+
             return Ok(students);
         }
+
 
         [HttpGet("{id}/overall-grade")]
         public async Task<ActionResult<double>> CalculateOverallGrade(int id)
         {
-            var grades = await _context.Students
-                .Where(g => g.Id == id)
+            // Fetch grades for the student from the Grade table
+            var grades = await _context.Grades
+                .Where(g => g.StudentId == id)
                 .ToListAsync();
 
             if (grades == null || !grades.Any())
@@ -69,9 +95,10 @@ namespace StudentApi.Controllers
                 return NotFound("No grades found for this student.");
             }
 
-            var overallGrade = grades.Average(g => g.grade);
+            var overallGrade = grades.Average(g => g.GradeValue);
             return Ok(overallGrade);
         }
+
 
 
     }
