@@ -98,6 +98,27 @@ namespace StudentApi.Controllers
             var overallGrade = grades.Average(g => g.GradeValue);
             return Ok(overallGrade);
         }
+        [HttpGet("average-overall-grade")]
+public async Task<ActionResult<double>> GetAverageOverallGrade()
+{
+    var students = await _context.Students
+        .Include(s => s.Grades)
+        .ToListAsync();
+
+    if (!students.Any() || students.All(s => !s.Grades.Any()))
+    {
+        return NotFound("No students with grades found.");
+    }
+
+   
+    double overallAverage = students
+        .Where(s => s.Grades.Any()) 
+        .SelectMany(s => s.Grades)  
+        .Average(g => g.GradeValue);
+
+    return Ok(overallAverage);
+}
+
 
 
 
