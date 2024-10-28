@@ -1,59 +1,127 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Student Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h1, h2 {
+            color: #2c3e50;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 200px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+            button:hover {
+                background-color: #2980b9;
+            }
+
+        #studentInfo, #averageGradeInfo {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 3px;
+            margin-top: 10px;
+        }
+    </style>
+    <script>
+        async function addStudent() {
+            const name = document.getElementById("studentName").value;
+            const age = document.getElementById("studentAge").value;
+            const grade = document.getElementById("studentGrade").value;
+            const response = await fetch('/api/Students', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: name, age: parseInt(age), grade: parseInt(grade) })
+            });
+            if (response.ok) {
+                alert('Student added successfully!');
+                document.getElementById("studentForm").reset();
+            } else {
+                alert('Failed to add student.');
+            }
+        }
+        async function getStudentById() {
+            const studentId = document.getElementById("studentId").value;
+            const response = await fetch(`/api/Students/${studentId}`);
+            if (response.ok) {
+                const student = await response.json();
+                document.getElementById("studentInfo").innerText = `Name: ${student.name}, Age: ${student.age}, Grade: ${student.grade}`;
+            } else {
+                document.getElementById("studentInfo").innerText = 'Student not found.';
+            }
+        }
+        async function getAverageGrade() {
+            const response = await fetch('/api/Students/AverageGrade');
+            if (response.ok) {
+                const averageGrade = await response.json();
+                document.getElementById("averageGradeInfo").innerText = `Average Grade: ${averageGrade}`;
+            } else {
+                document.getElementById("averageGradeInfo").innerText = 'Failed to retrieve average grade.';
+            }
+        }
+    </script>
 </head>
 <body>
-
-    <div class="text-center">
-        <h1 class="display-4">IFB398 Task: Student Score Management System</h1>
-    </div>
-
-    <!-- Main Content -->
-    <div class="container mt-5">
-        <!-- Add Student Score Section -->
-        <div class="section">
-            <h3>Add Student Score</h3>
-            <div class="mb-3">
-                <label for="studentId" class="form-label">Student ID:</label>
-                <input type="number" class="form-control" id="studentId" placeholder="Enter Student ID" required>
-            </div>
-            <div class="mb-3">
-                <label for="subject" class="form-label">Subject:</label>
-                <input type="text" class="form-control" id="subject" placeholder="Enter Subject" required>
-            </div>
-            <div class="mb-3">
-                <label for="score" class="form-label">Score:</label>
-                <input type="number" class="form-control" id="score" placeholder="Enter Score" required>
-            </div>
-            <button class="btn btn-primary" onclick="addScore()">Add Score</button>
-        </div>
-
-        <!-- Calculate Student Overall Grade Section -->
-        <div class="section mt-5">
-            <h3>Calculate Student Overall Grade</h3>
-            <div class="mb-3">
-                <label for="studentIdCalc" class="form-label">Student ID:</label>
-                <input type="number" class="form-control" id="studentIdCalc" placeholder="Enter Student ID" required>
-            </div>
-            <button class="btn btn-primary" onclick="calculateOverallGrade()">Calculate</button>
-        </div>
-    </div>
-
-    <script>
-    function addScore() {
-        alert("Adding score...");
-        // API logic for adding score
-    }
-
-    function calculateOverallGrade() {
-        alert("Calculating student overall grade...");
-        // API logic for calculating student overall grade
-    }
-    </script>
-
+    <h1>Student Management System</h1>
+    <h2>Add Student</h2>
+    <form id="studentForm" onsubmit="event.preventDefault(); addStudent();">
+        <label for="studentName">Name:</label>
+        <input type="text" id="studentName" required>
+        <br><br>
+        <label for="studentAge">ID:</label>
+        <input type="number" id="studentAge" required>
+        <br><br>
+        <label for="studentGrade">Grade:</label>
+        <input type="number" id="studentGrade" step="0.1" required>
+        <br><br>
+        <button type="submit">Add Student</button>
+    </form>
+    <h2>Get Student By ID</h2>
+    <label for="studentId">Student ID:</label>
+    <input type="number" id="studentId">
+    <button onclick="getStudentById()">Get Student</button>
+    <p id="studentInfo"></p>
+    <h2>Get Average Grade</h2>
+    <button onclick="getAverageGrade()">Get Average Grade</button>
+    <p id="averageGradeInfo"></p>
 </body>
 </html>

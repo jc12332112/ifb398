@@ -47,35 +47,9 @@ namespace StudentApi.Controllers
             }
 
             double averageGrade = await _context.Students.AverageAsync(s => s.grade);
-            return averageGrade; 
+            return averageGrade;
         }
-
-        [HttpGet("grades")]
-        public async Task<ActionResult<IEnumerable<Student>>> GetAllStudentGrades()
-        {
-            var students = await _context.Students.ToListAsync();
-            return Ok(students);
-        }
-
-        [HttpGet("{id}/overall-grade")]
-        public async Task<ActionResult<double>> CalculateOverallGrade(int id)
-        {
-            var grades = await _context.Students
-                .Where(g => g.Id == id)
-                .ToListAsync();
-
-            if (grades == null || !grades.Any())
-            {
-                return NotFound("No grades found for this student.");
-            }
-
-            var overallGrade = grades.Average(g => g.grade);
-            return Ok(overallGrade);
-        }
-
-
     }
 
 
 }
-
